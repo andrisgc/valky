@@ -15,6 +15,7 @@ add_executable(valky
 	src/main.cpp
 	src/core/SecureString.cpp
 	src/crypto/CryptoService.cpp
+	src/db/DatabaseManager.cpp
 )
 
 target_link_libraries(valky sodium sqlite3)
