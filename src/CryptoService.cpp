@@ -20,10 +20,10 @@ CryptoService::~CryptoService() {
         sodium_memzero(masterKey.data(), masterKey.size());
 }
 
-bool CryptoService::deriveKey(const SecureString& password, const unsigned char* salt) {
+bool CryptoService::deriveKey(const SecureString& masterPassword, const unsigned char* salt) {
     if (crypto_pwhash(
             masterKey.data(), masterKey.size(),
-            password.c_str(), password.size(),
+            masterPassword.c_str(), masterPassword.size(),
             salt,
             crypto_pwhash_OPSLIMIT_INTERACTIVE, 
             crypto_pwhash_MEMLIMIT_INTERACTIVE,

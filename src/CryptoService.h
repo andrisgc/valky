@@ -17,7 +17,7 @@ public:
     ~CryptoService();
 
     // Gera a masterKey.
-    bool deriveKey(const SecureString& password, const unsigned char* salt);
+    bool deriveKey(const SecureString& masterPassword, const unsigned char* salt);
 
     // Retorna cipherText.
     vector<unsigned char> encrypt(const SecureString& plaintextData, unsigned char* outNonce);
