@@ -58,11 +58,28 @@ int main () {
     vector<unsigned char> cipherText(secretData.length() + crypto_secretbox_MACBYTES);
 
     crypto_secretbox_easy(
-        cipherText.data(),
-        reinterpret_cast<const unsigned char*>(secretData.c_str()), secretData.length(),
-        nonce,
-        masterKey.data()
+            cipherText.data(),
+            reinterpret_cast<const unsigned char*>(secretData.c_str()), secretData.length(),
+            nonce,
+            masterKey.data()
     );
+
+    // Descriptografando um dado.
+    vector<unsigned char> decipherText(cipherText.size() - crypto_secretbox_MACBYTES);
+
+    if (crypto_secretbox_open_easy(
+            decipherText.data(),
+            cipherText.data(), cipherText.size(),
+            nonce,
+            masterKey.data()) != 0) {
+
+        cerr << "Erro de integridade: O cofre foi adulterado ou a chave mestra está errada.\n";
+        return 1;
+    }
+
+    string retriviedText(decipherText.begin(), decipherText.end());
+
+    cout << retriviedText << "\n";
 
     return 0;
 }
