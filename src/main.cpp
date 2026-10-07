@@ -24,6 +24,7 @@ int main () {
         return 1;
     }
 
+    // Hash da senha mestra do vault.
     string masterPassword = "senha123";
 
     unsigned char salt[crypto_pwhash_SALTBYTES];
@@ -49,7 +50,19 @@ int main () {
         return 1;
     }
 
-    cout << "Libsodium inicializado com sucesso. O ambiente está pronto.\n";
+    // Criptografando um dado.
+    string secretData = "senhadobanco";
+    
+    unsigned char nonce[crypto_secretbox_NONCEBYTES];
+    randombytes_buf(nonce, sizeof nonce);
+    vector<unsigned char> cipherText(secretData.length() + crypto_secretbox_MACBYTES);
+
+    crypto_secretbox_easy(
+        cipherText.data(),
+        reinterpret_cast<const unsigned char*>(secretData.c_str()), secretData.length(),
+        nonce,
+        masterKey.data()
+    );
 
     return 0;
 }
