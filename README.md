@@ -49,7 +49,7 @@ O projeto utiliza o CMake para gerenciar o processo de build de forma automatiza
 
 ```bash
 # 1. Clone o repositório
-git clone [https://github.com/andrisgc/valky](https://github.com/andrisgc/valky.git)
+git clone https://github.com/andrisgc/valky
 cd valky
 
 # 2. Crie a pasta de build
