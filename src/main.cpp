@@ -20,22 +20,26 @@ int main () {
         // Inicializa motor criptográfico.
         CryptoService cryptoService;
 
-        vector<unsigned char> salt = db.getSalt();
-        if (salt.empty()) {
-            cout << "[INFO] Primeiro uso detectado. Gerando novo Salt...\n";
-            salt.resize(crypto_pwhash_SALTBYTES);
+        vector<VaultRecord> vaults = db.getAllVaults();
+        if (vaults.empty()) {
+            cout << "[INFO] Nenhum vault encontrado. Criando vault principal...\n";
+            vector<unsigned char> salt(crypto_pwhash_SALTBYTES);
             randombytes_buf(salt.data(), salt.size());
 
-            if (!db.storeSalt(salt)) {
-                cerr << "Falha ao salvar o Salt no DB.\n";
+            if (!db.createVault("Vault 1", salt)) {
+                cerr << "Falha ao criar vault.\n";
                 return 1;
             }
+
+            vaults = db.getAllVaults();
         }
 
+        VaultRecord myVault = vaults[0];
+        cout << "[OK] Vault selecionado: " << myVault.name << "(ID: " << myVault.id << ")\n";
+
         SecureString masterPassword("senha123");
-        
         cout << "[OK] Derivando a chave mestra...\n";
-        if (!cryptoService.deriveKey(masterPassword, salt.data())) {
+        if (!cryptoService.deriveKey(masterPassword, myVault.salt.data())) {
             cerr << "Falha ao derivar a master key.\n";
             return 1;
         }
@@ -44,21 +48,15 @@ int main () {
         string serviceName = "Gmail";
         string userName = "usuario";
         SecureString plaintextData("s3cr3t");
+
         vector<unsigned char> nonce(crypto_secretbox_NONCEBYTES);
-
         vector<unsigned char> cipherText = cryptoService.encrypt(plaintextData, nonce.data());
-        cout << "[OK] Senha do " << serviceName << " criptografada com sucesso.\n";
 
-        if (db.insertCredential(serviceName, userName, cipherText, nonce)) {
-            cout << "[OK] Credencial salva no banco de dados 'valky_vault.db'.\n";
-        } else {
-            cerr << "Falha ao inserir credencial no banco.\n";
-        }
+        if (db.insertCredential(myVault.id, serviceName, userName, cipherText, nonce))
+            cout << "[OK] Credencial salva no vault " << myVault.name << ".\n";
 
-        cout << "Lendo vault do DB...\n";
-        vector<CredentialRecord> credentials = db.getAllCredentials();
-
-        cout << "Foram encontradas " << credentials.size() << " senhas no vault.\n";
+        cout << "Lendo senhas do vault...\n";
+        vector<CredentialRecord> credentials = db.getCredentialsByVault(myVault.id);
 
         for (const CredentialRecord& credential : credentials) {
             cout << "-> Descriptografando: " << credential.service << " (" << credential.username << ")\n";

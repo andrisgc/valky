@@ -6,8 +6,16 @@
 using namespace std;
 
 // Data Transfer Object (DTO).
+struct VaultRecord {
+    int id;
+    string name;
+    vector<unsigned char> salt;
+};
+
+// Data Transfer Object (DTO).
 struct CredentialRecord {
     int id;
+    int vaultId;
     string service;
     string username;
     vector<unsigned char> cipherText;
@@ -29,15 +37,16 @@ public:
 
     bool initializeDatabase();
 
-    vector<unsigned char> getSalt();
+    bool createVault(const string& name, const vector<unsigned char>& salt);
 
-    bool storeSalt(const vector<unsigned char>& salt);
+    vector<VaultRecord> getAllVaults();
 
-    bool insertCredential(const string& service,
+    bool insertCredential(int vaultId,
+                          const string& service,
                           const string& username,
                           const vector<unsigned char>& cipherText,
                           const vector<unsigned char>& nonce);
 
-    vector<CredentialRecord> getAllCredentials();
+    vector<CredentialRecord> getCredentialsByVault(int vaultId);
 
 };
