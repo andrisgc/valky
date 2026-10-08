@@ -109,3 +109,30 @@ bool DatabaseManager::insertCredential(const string& service,
     
     return success;
 }
+
+vector<CredentialRecord> DatabaseManager::getAllCredentials() {
+    vector<CredentialRecord> credentials;
+    const char* sql = "SELECT id, service, username, cipherText, nonce FROM credentials";
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            CredentialRecord credential;
+            credential.id = sqlite3_column_int(stmt, 0);
+            credential.service = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            credential.username = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+
+            const unsigned char* cipherTextBlob = static_cast<const unsigned char*>(sqlite3_column_blob(stmt, 3));
+            int cipherTextSize = sqlite3_column_bytes(stmt, 3);
+            if (cipherTextBlob && cipherTextSize > 0) credential.cipherText.assign(cipherTextBlob, cipherTextBlob + cipherTextSize);
+
+            const unsigned char* nonceBlob = static_cast<const unsigned char*>(sqlite3_column_blob(stmt, 4));
+            int nonceSize = sqlite3_column_bytes(stmt, 4);
+            if (nonceBlob && nonceSize > 0) credential.nonce.assign(nonceBlob, nonceBlob + nonceSize);
+
+            credentials.push_back(credential);
+        }
+        sqlite3_finalize(stmt);
+    }
+    return credentials;
+}

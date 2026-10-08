@@ -5,6 +5,15 @@
 
 using namespace std;
 
+// Data Transfer Object (DTO).
+struct CredentialRecord {
+    int id;
+    string service;
+    string username;
+    vector<unsigned char> cipherText;
+    vector<unsigned char> nonce;
+};
+
 class DatabaseManager {
 private:
     sqlite3* db;
@@ -28,5 +37,7 @@ public:
                           const string& username,
                           const vector<unsigned char>& cipherText,
                           const vector<unsigned char>& nonce);
+
+    vector<CredentialRecord> getAllCredentials();
 
 };

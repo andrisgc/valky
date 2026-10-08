@@ -41,7 +41,7 @@ int main () {
         }
 
         // Mock
-        string serviceName = "GitHub";
+        string serviceName = "Gmail";
         string userName = "usuario";
         SecureString plaintextData("s3cr3t");
         vector<unsigned char> nonce(crypto_secretbox_NONCEBYTES);
@@ -53,6 +53,21 @@ int main () {
             cout << "[OK] Credencial salva no banco de dados 'valky_vault.db'.\n";
         } else {
             cerr << "Falha ao inserir credencial no banco.\n";
+        }
+
+        cout << "Lendo vault do DB...\n";
+        vector<CredentialRecord> credentials = db.getAllCredentials();
+
+        cout << "Foram encontradas " << credentials.size() << " senhas no vault.\n";
+
+        for (const CredentialRecord& credential : credentials) {
+            cout << "-> Descriptografando: " << credential.service << " (" << credential.username << ")\n";
+            try {
+                SecureString decrypted = cryptoService.decrypt(credential.cipherText, credential.nonce.data());
+                cout << "    [SUCESSO] Senha recuperada: " << decrypted.c_str() << "\n";
+            } catch (const exception& e) {
+                cerr << "    [FALHA] Integridade comprometida ou chave incorreta: " << e.what() << "\n";
+            }
         }
 
     } catch (const exception& e) {
