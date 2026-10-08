@@ -49,8 +49,8 @@ O projeto utiliza o CMake para gerenciar o processo de build de forma automatiza
 
 ```bash
 # 1. Clone o repositório
-git clone [https://github.com/seu-usuario/valky-password-manager.git](https://github.com/seu-usuario/valky-password-manager.git)
-cd valky-password-manager
+git clone [https://github.com/andrisgc/valky](https://github.com/andrisgc/valky.git)
+cd valky
 
 # 2. Crie a pasta de build
 mkdir build && cd build
@@ -62,7 +62,7 @@ cmake ..
 make
 
 # 5. Execute o binário gerado
-./cofre_teste
+./valky
 ```
 
 ## 🚧 Próximos Passos (Roadmap)
