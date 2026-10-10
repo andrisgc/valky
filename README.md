@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/docs/assets/c3/png/valky-c3-lockup-reversed-2000.png" alt="Valky Password Manager Logo" width="250" />
+  <img src="/docs/assets/c3/png/valky-c3-lockup-reversed-2000.png" alt="Valky Password Manager Logo" width="800" />
 
   <h1>Valky Password Manager</h1>
 
