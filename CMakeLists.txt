@@ -9,6 +9,7 @@ include_directories(
 	include/core
 	include/crypto
 	include/db
+	include/view
 )
 
 add_executable(valky
@@ -16,6 +17,7 @@ add_executable(valky
 	src/core/SecureString.cpp
 	src/crypto/CryptoService.cpp
 	src/db/DatabaseManager.cpp
+	src/view/CliInterface.cpp
 )
 
 target_link_libraries(valky sodium sqlite3)
